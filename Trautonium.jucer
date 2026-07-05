@@ -9,6 +9,7 @@
       <FILE id="YPkmjy" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="z2xuUt" name="UIComponent.h" compile="0" resource="0" file="Source/UIComponent.h"/>
+      <FILE id="YDs9Zf" name="AudioState.h" compile="0" resource="0" file="Source/AudioState.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

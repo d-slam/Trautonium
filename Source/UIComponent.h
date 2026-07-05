@@ -28,53 +28,65 @@ public:
 
 	void paint(juce::Graphics& g) override
 	{
-		// Hintergrund
-		g.fillAll(juce::Colours::darkgrey);
-
-		// Rand
-		g.setColour(juce::Colours::white);
-		g.drawRect(getLocalBounds(), 2);
+		g.fillAll(juce::Colours::black);
 
 		g.setColour(juce::Colours::red);
-		//g.drawEllipse(myPoint.getX(), myPoint.getY(), 5, 5, 5.0f);
 
-
-		 // Alle aktiven Finger zeichnen
-		g.setColour(juce::Colours::red);
-
-		for (const auto& touch : touches)
+		for (auto& finger : fingers)
 		{
-			auto pos = touch.second;
+			if (finger.active.load())
+			{
+				float x = finger.x.load();
+				float y = finger.y.load();
 
-			float radius = 10.0f;
-
-			g.fillEllipse(pos.x - radius,
-				pos.y - radius,
-				radius * 2.0f,
-				radius * 2.0f);
+				g.fillEllipse(x - 10.0f,
+					y - 10.0f,
+					20.0f,
+					20.0f);
+			}
 		}
-
 	}
 
 
-	std::map<int, juce::Point<float>> touches;
+	//std::map<int, juce::Point<float>> touches;
 
 	void mouseDown(const juce::MouseEvent& e) override
 	{
-		touches[e.source.getIndex()] = e.position;
-		repaint();
+		auto id = e.source.getIndex();
+
+		if (id < fingers.size())
+		{
+			fingers[id].x.store(e.position.x);
+			fingers[id].y.store(e.position.y);
+			fingers[id].active.store(true);
+
+			repaint();
+		}
 	}
 
 	void mouseDrag(const juce::MouseEvent& e) override
 	{
-		touches[e.source.getIndex()] = e.position;
-		repaint();
+		auto id = e.source.getIndex();
+
+		if (id < fingers.size())
+		{
+			fingers[id].x.store(e.position.x);
+			fingers[id].y.store(e.position.y);
+
+			repaint();
+		}
 	}
 
 	void mouseUp(const juce::MouseEvent& e) override
 	{
-		touches.erase(e.source.getIndex());
-		repaint();
+		auto id = e.source.getIndex();
+
+		if (id < fingers.size())
+		{
+			fingers[id].active.store(false);
+
+			repaint();
+		}
 	}
 
 
@@ -83,4 +95,19 @@ private:
 
 	juce::Point<int> myPoint;
 
+
+	struct Finger
+	{
+		std::atomic<bool> active{ false };
+		std::atomic<float> x{ 0.0f };
+		std::atomic<float> y{ 0.0f };
+	};
+
+	std::array<Finger, 10> fingers;
+
+
+	//std::array<Finger, 10> fingers;
+
 };
+
+
