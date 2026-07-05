@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "AudioState.h"
 #include "UIComponent.h"
 
 //==============================================================================
@@ -25,8 +26,11 @@ public:
     void resized() override;
 
 private:
-    UIComponent uiComponent;
+    AudioState audioState;
 
+    UIComponent uiComponent{audioState};
+
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

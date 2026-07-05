@@ -10,14 +10,15 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "AudioState.h"
 
 class UIComponent : public juce::Component
 {
 public:
-	UIComponent()
+	UIComponent(AudioState& state) : audioState(state)
 	{
 
-		DBG("asd");
+		//DBG("asd");
 
 	}
 	~UIComponent()
@@ -32,7 +33,7 @@ public:
 
 		g.setColour(juce::Colours::red);
 
-		for (auto& finger : fingers)
+		for (auto& finger : audioState.fingers)
 		{
 			if (finger.active.load())
 			{
@@ -48,17 +49,16 @@ public:
 	}
 
 
-	//std::map<int, juce::Point<float>> touches;
 
 	void mouseDown(const juce::MouseEvent& e) override
 	{
 		auto id = e.source.getIndex();
 
-		if (id < fingers.size())
+		if (id < audioState.fingers.size())
 		{
-			fingers[id].x.store(e.position.x);
-			fingers[id].y.store(e.position.y);
-			fingers[id].active.store(true);
+			audioState.fingers[id].x.store(e.position.x);
+			audioState.fingers[id].y.store(e.position.y);
+			audioState.fingers[id].active.store(true);
 
 			repaint();
 		}
@@ -68,10 +68,10 @@ public:
 	{
 		auto id = e.source.getIndex();
 
-		if (id < fingers.size())
+		if (id < audioState.fingers.size())
 		{
-			fingers[id].x.store(e.position.x);
-			fingers[id].y.store(e.position.y);
+			audioState.fingers[id].x.store(e.position.x);
+			audioState.fingers[id].y.store(e.position.y);
 
 			repaint();
 		}
@@ -81,9 +81,9 @@ public:
 	{
 		auto id = e.source.getIndex();
 
-		if (id < fingers.size())
+		if (id < audioState.fingers.size())
 		{
-			fingers[id].active.store(false);
+			audioState.fingers[id].active.store(false);
 
 			repaint();
 		}
@@ -93,20 +93,7 @@ public:
 
 private:
 
-	juce::Point<int> myPoint;
-
-
-	struct Finger
-	{
-		std::atomic<bool> active{ false };
-		std::atomic<float> x{ 0.0f };
-		std::atomic<float> y{ 0.0f };
-	};
-
-	std::array<Finger, 10> fingers;
-
-
-	//std::array<Finger, 10> fingers;
+	AudioState& audioState;
 
 };
 

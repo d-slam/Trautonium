@@ -16,7 +16,14 @@
 struct AudioState
 {
 
+	struct Finger
+	{
+		std::atomic<bool> active{ false };
+		std::atomic<float> x{ 0.0f };
+		std::atomic<float> y{ 0.0f };
+	};
 
+	std::array<Finger, 10> fingers;
 		
 
 };
